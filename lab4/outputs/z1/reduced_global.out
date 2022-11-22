@@ -1,0 +1,66 @@
+make -C common clean
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+/bin/rm -f  *.o *.s *~
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+make -C cuda clean
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+/bin/rm -f dmm_main dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+make -C common 
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+cc  -DNDEBUG -c -Wall -std=gnu99 -O3 -c -o alloc.o alloc.c
+cc  -DNDEBUG -c -Wall -std=gnu99 -O3 -c -o error.o error.c
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+make -C cuda 
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -c -Wall -std=gnu99 -O3 -o dmm.o dmm.c
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=0 -o dmm_gpu.o dmm_gpu.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=0 -o dmm_main.o dmm_main.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=0 -o gpu_util.o gpu_util.cu
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -c -Wall -std=gnu99 -O3 -o mat_util.o mat_util.c
+/usr/local/cuda/bin/nvcc -o dmm_main -L../common  ../common/alloc.o  ../common/error.o dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o -L/usr/local/cuda/lib64 -lcudart -lcublas -lm
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+Benchmark started on Wed Mar  4 21:25:25 EET 2020 in dungani
+/bin/rm -f dmm_main dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=16 -DTHREAD_BLOCK_Y=16 -DTILE_X=16 -DNDEBUG -c -Wall -std=gnu99 -O3 -o dmm.o dmm.c
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=16 -DTHREAD_BLOCK_Y=16 -DTILE_X=16 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=2 -o dmm_gpu.o dmm_gpu.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=16 -DTHREAD_BLOCK_Y=16 -DTILE_X=16 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=2 -o dmm_main.o dmm_main.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=16 -DTHREAD_BLOCK_Y=16 -DTILE_X=16 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=2 -o gpu_util.o gpu_util.cu
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=16 -DTHREAD_BLOCK_Y=16 -DTILE_X=16 -DNDEBUG -c -Wall -std=gnu99 -O3 -o mat_util.o mat_util.c
+/usr/local/cuda/bin/nvcc -o dmm_main -L../common  ../common/alloc.o  ../common/error.o dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o -L/usr/local/cuda/lib64 -lcudart -lcublas -lm
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 16x16
+Grid dimensions : 128x128
+GPU kernel version: reduced_global
+Checking ... FAILED!
+Elapsed time: 6355.479980 ms
+Performance:  270.315841 Gflop/s
+>>>> End of record <<<<
+/bin/rm -f dmm_main dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=32 -DTHREAD_BLOCK_Y=32 -DTILE_X=32 -DNDEBUG -c -Wall -std=gnu99 -O3 -o dmm.o dmm.c
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=32 -DTHREAD_BLOCK_Y=32 -DTILE_X=32 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=2 -o dmm_gpu.o dmm_gpu.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=32 -DTHREAD_BLOCK_Y=32 -DTILE_X=32 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=2 -o dmm_main.o dmm_main.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=32 -DTHREAD_BLOCK_Y=32 -DTILE_X=32 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=2 -o gpu_util.o gpu_util.cu
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=32 -DTHREAD_BLOCK_Y=32 -DTILE_X=32 -DNDEBUG -c -Wall -std=gnu99 -O3 -o mat_util.o mat_util.c
+/usr/local/cuda/bin/nvcc -o dmm_main -L../common  ../common/alloc.o  ../common/error.o dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o -L/usr/local/cuda/lib64 -lcudart -lcublas -lm
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 32x32
+Grid dimensions : 64x64
+GPU kernel version: reduced_global
+Checking ... FAILED!
+Elapsed time: 5045.613281 ms
+Performance:  340.491200 Gflop/s
+>>>> End of record <<<<
+Benchmark ended on Wed Mar  4 21:28:59 EET 2020 in dungani

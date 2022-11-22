@@ -1,0 +1,927 @@
+make -C common clean
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+/bin/rm -f  *.o *.s *~
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+make -C cuda clean
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+/bin/rm -f dmm_main dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+make -C common 
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+cc  -DNDEBUG -c -Wall -std=gnu99 -O3 -c -o alloc.o alloc.c
+cc  -DNDEBUG -c -Wall -std=gnu99 -O3 -c -o error.o error.c
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/common'
+make -C cuda 
+make[1]: Entering directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -c -Wall -std=gnu99 -O3 -o dmm.o dmm.c
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=0 -o dmm_gpu.o dmm_gpu.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=0 -o dmm_main.o dmm_main.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=0 -o gpu_util.o gpu_util.cu
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DNDEBUG -c -Wall -std=gnu99 -O3 -o mat_util.o mat_util.c
+/usr/local/cuda/bin/nvcc -o dmm_main -L../common  ../common/alloc.o  ../common/error.o dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o -L/usr/local/cuda/lib64 -lcudart -lcublas -lm
+make[1]: Leaving directory `/home/parallel/parlab02/pps/lab4/dmm-skeleton/cuda'
+Benchmark started on Wed Mar  4 23:39:25 EET 2020 in dungani
+/bin/rm -f dmm_main dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=8 -DTHREAD_BLOCK_Y=16 -DTILE_X=8 -DNDEBUG -c -Wall -std=gnu99 -O3 -o dmm.o dmm.c
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=8 -DTHREAD_BLOCK_Y=16 -DTILE_X=8 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=1 -o dmm_gpu.o dmm_gpu.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=8 -DTHREAD_BLOCK_Y=16 -DTILE_X=8 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=1 -o dmm_main.o dmm_main.cu
+/usr/local/cuda/bin/nvcc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=8 -DTHREAD_BLOCK_Y=16 -DTILE_X=8 -DNDEBUG -I/usr/local/cuda/include -D_CHECK_ -c -ccbin gcc -arch sm_35 -O3 --ptxas-options=-v -DGPU_KERNEL=1 -o gpu_util.o gpu_util.cu
+cc -D__FLOAT_VALUES -DEPS=1e-5 -I../common -DTHREAD_BLOCK_X=8 -DTHREAD_BLOCK_Y=16 -DTILE_X=8 -DNDEBUG -c -Wall -std=gnu99 -O3 -o mat_util.o mat_util.c
+/usr/local/cuda/bin/nvcc -o dmm_main -L../common  ../common/alloc.o  ../common/error.o dmm.o dmm_gpu.o dmm_main.o gpu_util.o mat_util.o -L/usr/local/cuda/lib64 -lcudart -lcublas -lm
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x16
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 22.896000 ms
+Performance:  146.551503 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x16
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 45.287201 ms
+Performance:  148.185056 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 91.776192 ms
+Performance:  146.244604 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 201.303940 ms
+Performance:  133.348337 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x16
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 42.323902 ms
+Performance:  158.560200 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 84.132004 ms
+Performance:  159.532309 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 168.908417 ms
+Performance:  158.923671 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 351.044556 ms
+Performance:  152.935262 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x16
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 81.345085 ms
+Performance:  164.997956 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x16
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 166.385284 ms
+Performance:  161.333652 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 336.824463 ms
+Performance:  159.391900 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 668.163452 ms
+Performance:  160.700472 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x16
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 166.202682 ms
+Performance:  161.510905 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 331.090637 ms
+Performance:  162.152248 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 661.300598 ms
+Performance:  162.368192 Gflop/s
+>>>> End of record <<<<
+Dimension M: 256
+Adjusted dimension M: 256
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x16
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1334.063477 ms
+Performance:  160.973124 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x32
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 42.351551 ms
+Performance:  158.456685 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 84.193054 ms
+Performance:  159.416628 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 167.736069 ms
+Performance:  160.034427 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 347.434692 ms
+Performance:  154.524267 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x32
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 81.327713 ms
+Performance:  165.033201 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 161.963364 ms
+Performance:  165.738381 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 326.676300 ms
+Performance:  164.343392 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 658.570374 ms
+Performance:  163.041319 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x32
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 159.097733 ms
+Performance:  168.723621 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 328.516083 ms
+Performance:  163.423023 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 659.029358 ms
+Performance:  162.927768 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1318.574341 ms
+Performance:  162.864056 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x32
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 328.491852 ms
+Performance:  163.435077 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 654.667114 ms
+Performance:  164.013405 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1308.127563 ms
+Performance:  164.164697 Gflop/s
+>>>> End of record <<<<
+Dimension M: 512
+Adjusted dimension M: 512
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x32
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 2628.488037 ms
+Performance:  163.400679 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x64
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 81.436958 ms
+Performance:  164.811814 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x64
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 162.079239 ms
+Performance:  165.619889 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 323.326019 ms
+Performance:  166.046306 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 657.295715 ms
+Performance:  163.357496 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x64
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 159.197021 ms
+Performance:  168.618391 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 317.312958 ms
+Performance:  169.192874 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 645.548950 ms
+Performance:  166.330040 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1299.676636 ms
+Performance:  165.232150 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x64
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 314.826569 ms
+Performance:  170.529099 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 651.868042 ms
+Performance:  164.717666 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1305.961548 ms
+Performance:  164.436974 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 2601.274170 ms
+Performance:  165.110135 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x64
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 653.674377 ms
+Performance:  164.262492 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1302.652466 ms
+Performance:  164.854687 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 2601.688477 ms
+Performance:  165.083842 Gflop/s
+>>>> End of record <<<<
+Dimension M: 1024
+Adjusted dimension M: 1024
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x64
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 5203.050781 ms
+Performance:  165.094191 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x128
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 159.285187 ms
+Performance:  168.525060 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 317.567810 ms
+Performance:  169.057094 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 634.269226 ms
+Performance:  169.288022 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 256
+Adjusted dimension N: 256
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 32x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1294.158813 ms
+Performance:  165.936640 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x128
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 314.897095 ms
+Performance:  170.490907 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 628.310425 ms
+Performance:  170.893524 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1274.063843 ms
+Performance:  168.553849 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 512
+Adjusted dimension N: 512
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 64x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 2548.681885 ms
+Performance:  168.517198 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x128
+GPU kernel version: coalesced_A
+Checking ... PASSED!
+Elapsed time: 626.234680 ms
+Performance:  171.459975 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1301.562744 ms
+Performance:  164.992710 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 2599.979248 ms
+Performance:  165.192368 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 1024
+Adjusted dimension N: 1024
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 128x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 5163.186523 ms
+Performance:  166.368861 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 256
+Adjusted dimension K: 256
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 1304.544312 ms
+Performance:  164.615616 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 512
+Adjusted dimension K: 512
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 2596.949463 ms
+Performance:  165.385093 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 1024
+Adjusted dimension K: 1024
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 5187.806641 ms
+Performance:  165.579313 Gflop/s
+>>>> End of record <<<<
+Dimension M: 2048
+Adjusted dimension M: 2048
+Dimension N: 2048
+Adjusted dimension N: 2048
+Dimension K: 2048
+Adjusted dimension K: 2048
+>>>> Begin of record <<<<
+Block dimensions: 8x16
+Grid dimensions : 256x128
+GPU kernel version: coalesced_A
+Checking ... FAILED!
+Elapsed time: 10372.349609 ms
+Performance:  165.631413 Gflop/s
+>>>> End of record <<<<
+Benchmark ended on Wed Mar  4 23:49:10 EET 2020 in dungani
